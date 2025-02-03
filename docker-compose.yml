@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  phpmailer:
+    container_name: phpmailer
+    build: .
+    restart: always
+    environment:
+      - SMTP_HOST=smtp.example.com
+      - SMTP_USER=your@email.com
+      - SMTP_PASS=yourpassword
+      - SMTP_SECURE=tls
+      - SMTP_PORT=587
+      - MAIL_FROM=your@email.com
+      - MAIL_TO=recipient@email.com
+
