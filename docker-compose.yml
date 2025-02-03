@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   phpmailer:
-    container_name: phpmailer
+    container_name: PHPMailer
     build: .
     restart: always
     environment:

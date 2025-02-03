@@ -18,8 +18,8 @@ This is a lightweight **Alpine-based** Docker container that runs **PHP-FPM** wi
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourgithubusername/phpmailer-container.git
-cd phpmailer-container
+git clone https://github.com/Cypac-Cybersecurity/PHPMailer.git
+cd PHPMailer
 ```
 
 ### 2. Build the Docker Image
@@ -49,7 +49,7 @@ docker-compose up -d
 
 ## Configuration
 
-Set the following **environment variables** to configure SMTP settings:
+Set the following **environment variables** to configure SMTP settings. These are optional and only required when using `sendmail.php` for direct email testing:
 
 | Environment Variable | Description |
 |----------------------|-------------|
@@ -63,21 +63,69 @@ Set the following **environment variables** to configure SMTP settings:
 
 ---
 
-## Sending Emails
+## Using PHPMailer in Forms
 
-### Using the Container Manually
-To send an email from inside the container, run:
-```bash
-docker exec -it phpmailer php /var/www/html/sendmail.php
+If this container is added as a dependency to an Nginx web service, developers can use it to send emails from their PHP forms.
+
+### Example: Contact Form (`contact.html`)
+```html
+<form action="contact.php" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" required></textarea>
+    
+    <button type="submit">Send</button>
+</form>
 ```
 
-### Calling from Another Service
-If another container or service needs to send an email, you can execute:
+### Backend Script (`contact.php`)
 ```php
 <?php
-exec("php /var/www/html/sendmail.php");
+require '/var/www/html/vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = htmlspecialchars($_POST["name"]);
+    $email = htmlspecialchars($_POST["email"]);
+    $message = htmlspecialchars($_POST["message"]);
+
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = getenv('SMTP_HOST') ?: 'smtp.example.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = getenv('SMTP_USER') ?: 'your@email.com';
+        $mail->Password = getenv('SMTP_PASS') ?: 'yourpassword';
+        $mail->SMTPSecure = getenv('SMTP_SECURE') ?: 'tls';
+        $mail->Port = getenv('SMTP_PORT') ?: 587;
+        
+        $mail->setFrom(getenv('MAIL_FROM') ?: 'your@email.com', 'Website Contact');
+        $mail->addAddress('recipient@email.com', 'Admin');
+        
+        $mail->Subject = "New Contact Form Submission";
+        $mail->Body    = "Name: $name\nEmail: $email\nMessage:\n$message";
+        
+        if ($mail->send()) {
+            echo "Email sent successfully!";
+        } else {
+            echo "Email sending failed.";
+        }
+    } catch (Exception $e) {
+        echo "Error: {$mail->ErrorInfo}";
+    }
+} else {
+    echo "Invalid request.";
+}
 ?>
 ```
+
+Once the container is running alongside the webserver, this setup allows forms to send emails using PHPMailer.
 
 ---
 
@@ -97,7 +145,7 @@ To store this project on **GitHub**:
 git init
 git add .
 git commit -m "Initial PHPMailer container"
-git remote add origin https://github.com/yourgithubusername/phpmailer-container.git
+git remote add origin https://github.com/Cypac-Cybersecurity/PHPMailer.git
 git branch -M main
 git push -u origin main
 ```
@@ -115,5 +163,4 @@ Pull requests are welcome! If you find an issue or have suggestions, feel free t
 ---
 
 ## Credits
-Developed by [Matt Kent](https://github.com/Matt-Cyberguy) & ChatGPT🚀
-
+Developed by [Cypac Cybersecurity](https://github.com/Cypac-Cybersecurity) 🚀
