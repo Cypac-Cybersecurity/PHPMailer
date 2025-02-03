@@ -16,33 +16,42 @@ This is a lightweight **Alpine-based** Docker container that runs **PHP-FPM** wi
 
 ## Getting Started
 
-### 1. Clone the Repository
+### 1. Pull from GitHub Container Registry (Preferred Method)
+The easiest way to use this container is to pull it directly from **GitHub Container Registry (GHCR)**:
+```bash
+docker pull ghcr.io/cypac-cybersecurity/phpmailer:latest
+```
+
+### 2. Use Docker Compose
+For a persistent deployment, use **Docker Compose** to pull and run the container:
+```yaml
+version: '3.8'
+
+services:
+  phpmailer:
+    container_name: PHPMailer
+    image: ghcr.io/cypac-cybersecurity/phpmailer:latest
+    restart: always
+    environment:
+      - SMTP_HOST=smtp.example.com
+      - SMTP_USER=your@email.com
+      - SMTP_PASS=yourpassword
+      - SMTP_SECURE=tls
+      - SMTP_PORT=587
+      - MAIL_FROM=your@email.com
+      - MAIL_TO=recipient@email.com
+```
+Then run:
+```bash
+docker-compose up -d
+```
+
+### 3. Build from Source (Alternative Method)
+If you prefer to build the container from source, clone the GitHub repository and build manually:
 ```bash
 git clone https://github.com/Cypac-Cybersecurity/PHPMailer.git
 cd PHPMailer
-```
-
-### 2. Build the Docker Image
-```bash
-docker build -t yourdockerhubusername/phpmailer .
-```
-
-### 3. Run the Container
-```bash
-docker run -d --name phpmailer \
-  -e SMTP_HOST=smtp.example.com \
-  -e SMTP_USER=your@email.com \
-  -e SMTP_PASS=yourpassword \
-  -e SMTP_SECURE=tls \
-  -e SMTP_PORT=587 \
-  -e MAIL_FROM=your@email.com \
-  -e MAIL_TO=recipient@email.com \
-  yourdockerhubusername/phpmailer
-```
-
-Alternatively, you can use **Docker Compose**:
-```bash
-docker-compose up -d
+docker build -t phpmailer .
 ```
 
 ---
@@ -129,25 +138,14 @@ Once the container is running alongside the webserver, this setup allows forms t
 
 ---
 
-## Deploying to Docker Hub
-To push the container to **Docker Hub**:
+## Deploying to GitHub Container Registry
+To push the container to **GHCR**:
 ```bash
-docker login
-docker tag yourdockerhubusername/phpmailer yourdockerhubusername/phpmailer:latest
-docker push yourdockerhubusername/phpmailer:latest
-```
+docker login ghcr.io -u Cypac-Cybersecurity --password-stdin
 
----
+docker tag phpmailer ghcr.io/cypac-cybersecurity/phpmailer:latest
 
-## Deploying to GitHub
-To store this project on **GitHub**:
-```bash
-git init
-git add .
-git commit -m "Initial PHPMailer container"
-git remote add origin https://github.com/Cypac-Cybersecurity/PHPMailer.git
-git branch -M main
-git push -u origin main
+docker push ghcr.io/cypac-cybersecurity/phpmailer:latest
 ```
 
 ---
