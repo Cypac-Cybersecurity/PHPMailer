@@ -115,5 +115,5 @@ Pull requests are welcome! If you find an issue or have suggestions, feel free t
 ---
 
 ## Credits
-Developed by [Your Name](https://github.com/yourgithubusername) 🚀
+Developed by [Matt Kent](https://github.com/Matt-Cyberguy) & ChatGPT🚀
 
