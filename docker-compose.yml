@@ -3,7 +3,7 @@ version: '3.8'
 services:
   phpmailer:
     container_name: PHPMailer
-    build: .
+    image: ghcr.io/cypac-cybersecurity/phpmailer:latest
     restart: always
     environment:
       - SMTP_HOST=smtp.example.com
@@ -13,4 +13,5 @@ services:
       - SMTP_PORT=587
       - MAIL_FROM=your@email.com
       - MAIL_TO=recipient@email.com
-
+    networks:
+      - default
